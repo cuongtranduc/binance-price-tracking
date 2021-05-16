@@ -17,13 +17,13 @@ import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 @SuppressLint("UnusedCrossfadeTargetStateParameter")
 @Composable
 fun MainScreenCompose(tickersViewModel: TickersViewModel) {
-    val currentTab: Tabs by tickersViewModel.currentTab.observeAsState(Tabs.BTC)
+    val currentTab: Tabs? by tickersViewModel.currentTab.observeAsState()
 
     Scaffold(
         topBar = { AppTopBar() }
         ) {
         Column {
-            AppTabBar(currentTab, onChangeTab = { tickersViewModel.updateCurrentTab(it) })
+            AppTabBar(tickersViewModel)
             TickerListHeader(tickersViewModel)
             Crossfade(targetState = currentTab) {
                 TickerListCompose(tickersViewModel)

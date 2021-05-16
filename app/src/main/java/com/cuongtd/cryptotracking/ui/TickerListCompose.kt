@@ -28,6 +28,7 @@ import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 
 @Composable
 fun TickerListCompose(tickersViewModel: TickersViewModel) {
+    Log.d("test", "test test")
     val tickers by tickersViewModel.tickers.observeAsState()
 
     LazyColumn(

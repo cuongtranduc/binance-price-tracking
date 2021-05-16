@@ -8,6 +8,8 @@ import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,13 +17,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cuongtd.cryptotracking.utils.Constants
+import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 
 enum class Tabs(val symbol: String) {
     BTC(Constants.BTC), ETH(Constants.ETH), BNB(Constants.BNB), USD(Constants.USD),
 }
 
 @Composable
-fun AppTabBar(currentTab: Tabs, onChangeTab: (Tabs) -> Unit) {
+fun AppTabBar(tickersViewModel: TickersViewModel) {
+    val currentTab: Tabs? by tickersViewModel.currentTab.observeAsState()
     val interactionSource = remember { MutableInteractionSource() }
 
     Row(Modifier.background(MaterialTheme.colors.primaryVariant)) {
@@ -34,7 +38,7 @@ fun AppTabBar(currentTab: Tabs, onChangeTab: (Tabs) -> Unit) {
                         interactionSource = interactionSource,
                         indication = null
                     ) {
-                        onChangeTab(tab)
+                        tickersViewModel.updateCurrentTab(tab)
                     },
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically

@@ -28,22 +28,24 @@ class TickersViewModel : ViewModel() {
         get() = _currentTab
 
     var tickers: MutableLiveData<List<Ticker>> = MutableLiveData<List<Ticker>>(listOf())
+    var allTickers: List<Ticker> = listOf()
 
     init {
         viewModelScope.launch() {
             tickers.value = tickerRepository.getTickers()
             tickerRepository.webSocketCreate(viewModelScope).asLiveData().observeForever {
                 if (it != null) {
-                    tickers.value = (gson.fromJson(
+                    allTickers = (gson.fromJson(
                         it.json,
                         tickerType
                     ) as List<Ticker>
                             ).plus(
                             tickers.value as List<Ticker>
-                        )?.distinctBy { ticker -> ticker.symbol }.filter {
-                            it.symbol.takeLast(3)
-                                .contains(_currentTab.value!!.symbol, ignoreCase = true)
-                        }
+                        )?.distinctBy { ticker -> ticker.symbol }
+                    tickers.value = allTickers.filter {
+                        it.symbol.takeLast(3)
+                            .contains(_currentTab.value!!.symbol, ignoreCase = true)
+                    }
                     applySort()
                 }
             }
@@ -52,7 +54,7 @@ class TickersViewModel : ViewModel() {
 
     fun updateCurrentTab(tab: Tabs) {
         viewModelScope.launch {
-            tickers.value = tickers.value?.filter {
+            tickers.value = allTickers.filter {
                 it.symbol.takeLast(3).contains(tab.symbol, ignoreCase = true)
             }
             _currentTab.value = tab
