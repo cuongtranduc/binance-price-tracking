@@ -1,7 +1,6 @@
 package com.cuongtd.cryptotracking.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,7 +26,6 @@ fun AppTopBar() {
     ) {
         Text(
             "Markets",
-            color = MaterialTheme.colors.onSurface,
             fontSize = 18.sp,
             fontWeight = FontWeight.W600
         )

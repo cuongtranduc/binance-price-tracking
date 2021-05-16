@@ -1,7 +1,7 @@
 package com.cuongtd.cryptotracking.ui
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
 import com.cuongtd.cryptotracking.ui.theme.TickerListCompose

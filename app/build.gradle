@@ -68,4 +68,8 @@ dependencies {
     implementation("androidx.compose.runtime:runtime:1.0.0-beta06")
     implementation("androidx.compose.runtime:runtime-livedata:1.0.0-beta06")
     implementation("androidx.compose.runtime:runtime-rxjava2:1.0.0-beta06")
+
+    def retrofit_version = "2.9.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
 }

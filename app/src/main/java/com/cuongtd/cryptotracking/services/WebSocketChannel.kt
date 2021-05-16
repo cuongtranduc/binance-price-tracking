@@ -1,6 +1,7 @@
 package com.cuongtd.cryptotracking
 
 import com.cuongtd.cryptotracking.models.RawData
+import com.cuongtd.cryptotracking.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -36,7 +37,7 @@ class WebSocketChannel(
             .build()
 
         val request = Request.Builder()
-            .url("wss://stream.binance.com:9443/ws/!ticker@arr")
+            .url(Constants.WS_URL)
             .build()
 
         socket =
@@ -111,17 +112,5 @@ class WebSocketChannel(
             incoming.close(t)
             outgoing.close(t)
         }
-    }
-}
-
-class TickerRepository {
-    private lateinit var channel: IWebSocketChannel
-    fun webSocketCreate(scope: CoroutineScope): Flow<RawData> {
-        channel = WebSocketChannel(scope)
-        return channel.getIncoming()
-    }
-
-    fun webSocketSend(data: RawData) {
-        channel.send(data)
     }
 }
