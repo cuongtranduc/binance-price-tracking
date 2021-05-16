@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.cuongtd.cryptotracking.models.Ticker
 import com.cuongtd.cryptotracking.repositories.TickerRepository
+import com.cuongtd.cryptotracking.ui.Tabs
 import com.cuongtd.cryptotracking.utils.SortParams
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -14,10 +15,19 @@ class TickersViewModel : ViewModel() {
     private val gson = Gson()
     private val tickerType = object : TypeToken<List<Ticker>>() {}.type
 
-    var sortKey = liveData<SortParams> { SortParams.Default }
-    var isDesc = liveData<Boolean> { true }
+    private val _isSortDesc = MutableLiveData(true)
+    val isSortDesc: LiveData<Boolean>
+        get() = _isSortDesc
 
-    var tickers: MutableLiveData<List<Ticker>> = MutableLiveData<List<Ticker>>()
+    private val _currentSortKey = MutableLiveData(SortParams.Default)
+    val currentSortKey: LiveData<SortParams>
+        get() = _currentSortKey
+
+    private val _currentTab = MutableLiveData(Tabs.BTC)
+    val currentTab: LiveData<Tabs>
+        get() = _currentTab
+
+    var tickers: MutableLiveData<List<Ticker>> = MutableLiveData<List<Ticker>>(listOf())
 
     init {
         viewModelScope.launch() {
@@ -30,10 +40,42 @@ class TickersViewModel : ViewModel() {
                     ) as List<Ticker>
                             ).plus(
                             tickers.value as List<Ticker>
-                        )?.distinctBy { ticker -> ticker.symbol }
-                    Log.d("test", tickers.value?.count().toString())
+                        )?.distinctBy { ticker -> ticker.symbol }.filter {
+                            it.symbol.takeLast(3)
+                                .contains(_currentTab.value!!.symbol, ignoreCase = true)
+                        }
+                    applySort()
                 }
             }
+        }
+    }
+
+    fun updateCurrentTab(tab: Tabs) {
+        viewModelScope.launch {
+            tickers.value = tickers.value?.filter {
+                it.symbol.takeLast(3).contains(tab.symbol, ignoreCase = true)
+            }
+            _currentTab.value = tab
+            applySort();
+        }
+    }
+
+    fun updateSortKey(key: SortParams) {
+        viewModelScope.launch {
+            _isSortDesc.value = if (_currentSortKey.value != key) true else !_isSortDesc.value!!
+            _currentSortKey.value = key
+            applySort()
+        }
+    }
+
+    private fun applySort() {
+        tickers.value = when (_currentSortKey.value) {
+            SortParams.Default -> tickers.value
+            SortParams.Pair -> if (!_isSortDesc.value!!) tickers.value?.sortedByDescending { it.symbol } else tickers.value?.sortedBy { it.symbol }
+            SortParams.Vol -> if (!_isSortDesc.value!!) tickers.value?.sortedByDescending { it.volume.toDouble() } else tickers.value?.sortedBy { it.volume.toDouble() }
+            SortParams.Price -> if (!_isSortDesc.value!!) tickers.value?.sortedByDescending { it.lastPrice.toDouble() } else tickers.value?.sortedBy { it.lastPrice.toDouble() }
+            SortParams.Change -> if (!_isSortDesc.value!!) tickers.value?.sortedByDescending { it.priceChangePercent.toDouble() } else tickers.value?.sortedBy { it.priceChangePercent.toDouble() }
+            else -> tickers.value
         }
     }
 }

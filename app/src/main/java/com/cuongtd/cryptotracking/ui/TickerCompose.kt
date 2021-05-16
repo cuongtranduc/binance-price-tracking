@@ -37,7 +37,7 @@ fun TickerCompose(ticker: Ticker) {
                 Text(
                     "Vol ${Helper.formatVolume(ticker.volume)}",
                     color = MaterialTheme.colors.onSecondary,
-                    fontSize = 14.sp,
+                    fontSize = 12.sp,
                     modifier = Modifier.padding(top = 3.dp)
                 )
             }

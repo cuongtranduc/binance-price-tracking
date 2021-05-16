@@ -1,5 +1,6 @@
 package com.cuongtd.cryptotracking.ui.theme
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cuongtd.cryptotracking.models.Ticker
 import com.cuongtd.cryptotracking.noRippleClickable
 import com.cuongtd.cryptotracking.ui.Tabs
 import com.cuongtd.cryptotracking.ui.TickerCompose
@@ -25,57 +27,36 @@ import com.cuongtd.cryptotracking.utils.SortParams
 import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 
 @Composable
-fun TickerListCompose(tickersViewModel: TickersViewModel, tab: Tabs) {
-    var sortKey = remember { mutableStateOf(SortParams.Default) }
-    var isDesc = remember { mutableStateOf(true) }
+fun TickerListCompose(tickersViewModel: TickersViewModel) {
+    val tickers by tickersViewModel.tickers.observeAsState()
 
-    val tickers by tickersViewModel.tickers.observeAsState(listOf())
-    val filteredTickers = tickers.filter {
-        it.symbol.takeLast(3).contains(tab.symbol, ignoreCase = true)
-    }
-
-    val sortedList =
-        when (sortKey.value) {
-            SortParams.Default -> filteredTickers
-            SortParams.Pair -> if (!isDesc.value) filteredTickers.sortedByDescending { it.symbol } else filteredTickers.sortedBy { it.symbol }
-            SortParams.Vol -> if (!isDesc.value) filteredTickers.sortedByDescending { it.volume.toDouble() } else filteredTickers.sortedBy { it.volume.toDouble() }
-            SortParams.Price -> if (!isDesc.value) filteredTickers.sortedByDescending { it.lastPrice.toDouble() } else filteredTickers.sortedBy { it.lastPrice.toDouble() }
-            SortParams.Change -> if (!isDesc.value) filteredTickers.sortedByDescending { it.priceChangePercent.toDouble() } else filteredTickers.sortedBy { it.priceChangePercent.toDouble() }
-        }
-
-    Column() {
-        TickerListHeader(sortKey, isDesc)
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            items(items = sortedList!!) { ticker ->
-                TickerCompose(ticker)
-            }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        items(items = tickers!!) { ticker ->
+            TickerCompose(ticker)
         }
     }
 }
 
 @Composable
-fun TickerListHeader(sortKey: MutableState<SortParams>, isDesc: MutableState<Boolean>) {
+fun TickerListHeader(tickersViewModel: TickersViewModel) {
     Row(
         Modifier
             .background(Color(0xFF1A212A))
-            .padding(horizontal = 15.dp, vertical = 7.dp)
+            .padding(horizontal = 15.dp, vertical = 5.dp)
     ) {
         Row(Modifier.weight(1f)) {
             Row(
                 Modifier
                     .noRippleClickable() {
-                        isDesc.value =
-                            if (sortKey.value != SortParams.Pair) true else !isDesc.value
-                        sortKey.value = SortParams.Pair
+                        tickersViewModel.updateSortKey(SortParams.Pair)
                     },
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TickListHeaderItem("Pair", SortParams.Pair, sortKey, isDesc)
+                TickListHeaderItem("Pair", SortParams.Pair, tickersViewModel)
             }
             Text(
                 " / ", color = MaterialTheme.colors.onSecondary,
@@ -83,39 +64,37 @@ fun TickerListHeader(sortKey: MutableState<SortParams>, isDesc: MutableState<Boo
             Row(
                 Modifier
                     .noRippleClickable() {
-                        isDesc.value =
-                            if (sortKey.value != SortParams.Vol) true else !isDesc.value
-                        sortKey.value = SortParams.Vol
+                        tickersViewModel.updateSortKey(SortParams.Vol)
+
                     },
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TickListHeaderItem("Vol", SortParams.Vol, sortKey, isDesc)
+                TickListHeaderItem("Vol", SortParams.Vol, tickersViewModel)
             }
         }
         Row(
             Modifier
                 .weight(1f)
                 .noRippleClickable() {
-                    isDesc.value = if (sortKey.value != SortParams.Price) true else !isDesc.value
-                    sortKey.value = SortParams.Price
+                    tickersViewModel.updateSortKey(SortParams.Price)
+
                 },
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TickListHeaderItem("Last Price", SortParams.Price, sortKey, isDesc)
+            TickListHeaderItem("Last Price", SortParams.Price, tickersViewModel)
         }
         Row(
             Modifier
                 .weight(1f)
                 .noRippleClickable() {
-                    isDesc.value = if (sortKey.value != SortParams.Change) true else !isDesc.value
-                    sortKey.value = SortParams.Change
+                    tickersViewModel.updateSortKey(SortParams.Change)
                 },
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TickListHeaderItem("24h Chg", SortParams.Change, sortKey, isDesc)
+            TickListHeaderItem("24h Chg", SortParams.Change, tickersViewModel)
         }
     }
 }
@@ -124,17 +103,18 @@ fun TickerListHeader(sortKey: MutableState<SortParams>, isDesc: MutableState<Boo
 fun TickListHeaderItem(
     text: String,
     sortKey: SortParams,
-    currentSortKey: MutableState<SortParams>,
-    isDesc: MutableState<Boolean>
+    tickersViewModel: TickersViewModel
 ) {
+    val currentSortKey by tickersViewModel.currentSortKey.observeAsState()
+    val isSortDesc by tickersViewModel.isSortDesc.observeAsState()
 
     Text(
         text,
         fontSize = 14.sp,
-        color = if (currentSortKey.value == sortKey) MaterialTheme.colors.primary else MaterialTheme.colors.onSecondary,
+        color = if (currentSortKey == sortKey) MaterialTheme.colors.primary else MaterialTheme.colors.onSecondary,
         textAlign = TextAlign.End
     )
-    if (currentSortKey.value == sortKey && isDesc.value) {
+    if (currentSortKey == sortKey && isSortDesc!!) {
         Icon(
             imageVector = Icons.Filled.ArrowUpward,
             contentDescription = "Change Percentage",
@@ -144,7 +124,7 @@ fun TickListHeaderItem(
                 .size(16.dp)
         )
     }
-    if (currentSortKey.value == sortKey && !isDesc.value) {
+    if (tickersViewModel.currentSortKey.value == sortKey && !isSortDesc!!) {
         Icon(
             imageVector = Icons.Filled.ArrowDownward,
             contentDescription = "Change Percentage",

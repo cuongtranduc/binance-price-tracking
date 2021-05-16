@@ -29,7 +29,7 @@ fun AppTabBar(currentTab: Tabs, onChangeTab: (Tabs) -> Unit) {
             Row(
                 Modifier
                     .weight(1f, true)
-                    .height(30.dp)
+                    .height(35.dp)
                     .clickable(
                         interactionSource = interactionSource,
                         indication = null
@@ -42,7 +42,7 @@ fun AppTabBar(currentTab: Tabs, onChangeTab: (Tabs) -> Unit) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         tab.name,
-                        color = if (tab == currentTab) Color.Unspecified else MaterialTheme.colors.onSurface,
+                        color = if (tab == currentTab) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface,
                         fontWeight = FontWeight(600)
                     )
                     Divider(
