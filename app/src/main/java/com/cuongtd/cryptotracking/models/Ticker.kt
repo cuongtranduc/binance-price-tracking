@@ -6,7 +6,7 @@ data class Ticker(
     @SerializedName("s", alternate=["symbol"]) var symbol: String,
     @SerializedName("P", alternate=["priceChangePercent"]) var priceChangePercent: String,
     @SerializedName("c", alternate=["lastPrice"]) var lastPrice: String,
-    @SerializedName("v", alternate=["volume"]) var volume: String,
+    @SerializedName("q", alternate=["quoteVolume"]) var volume: String,
 )
 
 data class SpotTicker (

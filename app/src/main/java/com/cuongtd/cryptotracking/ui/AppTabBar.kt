@@ -20,7 +20,7 @@ import com.cuongtd.cryptotracking.utils.Constants
 import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 
 enum class Tabs(val symbol: String) {
-    BTC(Constants.BTC), ETH(Constants.ETH), BNB(Constants.BNB), USD(Constants.USD),
+    BTC(Constants.BTC), ETH(Constants.ETH), BNB(Constants.BNB), USDT(Constants.USDT),
 }
 
 @Composable

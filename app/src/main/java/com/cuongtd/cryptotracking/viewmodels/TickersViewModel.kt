@@ -30,22 +30,25 @@ class TickersViewModel : ViewModel() {
     var tickers: MutableLiveData<List<Ticker>> = MutableLiveData<List<Ticker>>(listOf())
     var allTickers: List<Ticker> = listOf()
 
+    var basePrice = MutableLiveData<Double>(0.0)
+
     init {
         viewModelScope.launch() {
-            tickers.value = tickerRepository.getTickers()
+            allTickers = tickerRepository.getTickers()
             tickerRepository.webSocketCreate(viewModelScope).asLiveData().observeForever {
                 if (it != null) {
-                    allTickers = (gson.fromJson(
+                    tickers.value = (gson.fromJson(
                         it.json,
                         tickerType
                     ) as List<Ticker>
                             ).plus(
-                            tickers.value as List<Ticker>
+                            allTickers
                         )?.distinctBy { ticker -> ticker.symbol }
-                    tickers.value = allTickers.filter {
+                    tickers.value = tickers.value!!.filter {
                         it.symbol.takeLast(3)
                             .contains(_currentTab.value!!.symbol, ignoreCase = true)
                     }
+                    updateBasePrice()
                     applySort()
                 }
             }
@@ -58,6 +61,7 @@ class TickersViewModel : ViewModel() {
                 it.symbol.takeLast(3).contains(tab.symbol, ignoreCase = true)
             }
             _currentTab.value = tab
+            updateBasePrice()
             applySort();
         }
     }
@@ -78,6 +82,15 @@ class TickersViewModel : ViewModel() {
             SortParams.Price -> if (!_isSortDesc.value!!) tickers.value?.sortedByDescending { it.lastPrice.toDouble() } else tickers.value?.sortedBy { it.lastPrice.toDouble() }
             SortParams.Change -> if (!_isSortDesc.value!!) tickers.value?.sortedByDescending { it.priceChangePercent.toDouble() } else tickers.value?.sortedBy { it.priceChangePercent.toDouble() }
             else -> tickers.value
+        }
+    }
+
+    private fun updateBasePrice() {
+        basePrice.value = when (currentTab.value) {
+            Tabs.BTC -> allTickers!!.find { it.symbol == "BTCUSDT" }?.lastPrice?.toDouble()
+            Tabs.ETH -> allTickers!!.find { it.symbol == "ETHUSDT" }?.lastPrice?.toDouble()
+            Tabs.BNB -> allTickers!!.find { it.symbol == "BNBUSDT" }?.lastPrice?.toDouble()
+            else -> 1.0
         }
     }
 }

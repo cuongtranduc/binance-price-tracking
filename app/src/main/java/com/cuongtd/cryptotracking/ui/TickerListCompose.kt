@@ -28,7 +28,6 @@ import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 
 @Composable
 fun TickerListCompose(tickersViewModel: TickersViewModel) {
-    Log.d("test", "test test")
     val tickers by tickersViewModel.tickers.observeAsState()
 
     LazyColumn(
@@ -36,7 +35,7 @@ fun TickerListCompose(tickersViewModel: TickersViewModel) {
             .fillMaxSize()
     ) {
         items(items = tickers!!) { ticker ->
-            TickerCompose(ticker)
+            TickerCompose(ticker, tickersViewModel)
         }
     }
 }
@@ -111,7 +110,7 @@ fun TickListHeaderItem(
 
     Text(
         text,
-        fontSize = 14.sp,
+        fontSize = 13.sp,
         color = if (currentSortKey == sortKey) MaterialTheme.colors.primary else MaterialTheme.colors.onSecondary,
         textAlign = TextAlign.End
     )

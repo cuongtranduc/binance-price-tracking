@@ -9,22 +9,32 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.TrendingDown
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cuongtd.cryptotracking.models.Ticker
 import com.cuongtd.cryptotracking.ui.theme.GainColor
 import com.cuongtd.cryptotracking.ui.theme.LoseColor
 import com.cuongtd.cryptotracking.utils.Helper
+import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 
 @Composable
-fun TickerCompose(ticker: Ticker) {
+fun TickerCompose(ticker: Ticker, tickersViewModel: TickersViewModel) {
+    val basePrice by tickersViewModel.basePrice.observeAsState()
+    val tab by tickersViewModel.currentTab.observeAsState()
+    val firstSymbol = ticker.symbol.dropLast(tab!!.name.length)
+
+
     Column {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 15.dp, vertical = 10.dp),
+                .padding(horizontal = 15.dp, vertical = 7.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
@@ -33,7 +43,11 @@ fun TickerCompose(ticker: Ticker) {
                     .fillMaxHeight(), horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(ticker.symbol)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(firstSymbol, fontSize = 16.sp, fontWeight = FontWeight.W500)
+                    Text(" /", fontSize = 14.sp)
+                    Text(tickersViewModel.currentTab.value!!.name, fontSize = 14.sp)
+                }
                 Text(
                     "Vol ${Helper.formatVolume(ticker.volume)}",
                     color = MaterialTheme.colors.onSecondary,
@@ -48,7 +62,13 @@ fun TickerCompose(ticker: Ticker) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(Helper.formatPrice(ticker.lastPrice))
+                Text(Helper.formatPrice(ticker.lastPrice), fontSize = 14.sp)
+                Text(
+                    "${Helper.formatPriceDouble(ticker.lastPrice.toDouble() * (basePrice ?: 0.0))}$",
+                    color = MaterialTheme.colors.onSecondary,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(top = 3.dp)
+                )
             }
             Row(
                 Modifier
@@ -58,7 +78,8 @@ fun TickerCompose(ticker: Ticker) {
             ) {
                 Text(
                     Helper.formatPercentageChange(ticker.priceChangePercent),
-                    color = if (ticker.priceChangePercent.toDouble() >= 0) GainColor else LoseColor
+                    color = if (ticker.priceChangePercent.toDouble() >= 0) GainColor else LoseColor,
+                    fontSize = 14.sp
                 )
                 Icon(
                     imageVector = if (ticker.priceChangePercent.toDouble() >= 0) Icons.Filled.TrendingUp else Icons.Filled.TrendingDown,

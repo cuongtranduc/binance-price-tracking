@@ -27,6 +27,10 @@ class Helper {
             return trimTrailingZero(price).toString()
         }
 
+        fun formatPriceDouble(price: Double): String {
+            return DecimalFormat("#,###.##").format(price.toDouble())
+        }
+
         private fun trimTrailingZero(value: String?): String? {
             return if (!value.isNullOrEmpty()) {
                 if (value!!.indexOf(".") < 0) {

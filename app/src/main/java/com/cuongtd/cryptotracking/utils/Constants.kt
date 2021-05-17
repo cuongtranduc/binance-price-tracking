@@ -7,7 +7,7 @@ class Constants {
 
         const val BTC = "BTC"
         const val ETH = "ETH"
-        const val USD = "SD"
+        const val USDT = "SDT"
         const val BNB = "BNB"
     }
 }
