@@ -1,6 +1,5 @@
 package com.cuongtd.cryptotracking.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.cuongtd.cryptotracking.models.Ticker
 import com.cuongtd.cryptotracking.repositories.TickerRepository

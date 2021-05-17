@@ -1,6 +1,5 @@
 package com.cuongtd.cryptotracking.ui.theme
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,7 +10,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,15 +19,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cuongtd.cryptotracking.models.Ticker
 import com.cuongtd.cryptotracking.noRippleClickable
-import com.cuongtd.cryptotracking.ui.Tabs
 import com.cuongtd.cryptotracking.ui.TickerCompose
 import com.cuongtd.cryptotracking.utils.SortParams
 import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 
 @Composable
-fun TickerListCompose(tickersViewModel: TickersViewModel) {
+fun TickerListCompose(tickersViewModel: TickersViewModel, onNavigateOrderBook: (symbol: String) -> Unit) {
     val tickers by tickersViewModel.tickers.observeAsState()
 
     LazyColumn(
@@ -35,7 +33,7 @@ fun TickerListCompose(tickersViewModel: TickersViewModel) {
             .fillMaxSize()
     ) {
         items(items = tickers!!) { ticker ->
-            TickerCompose(ticker, tickersViewModel)
+            TickerCompose(ticker, tickersViewModel, onNavigateOrderBook)
         }
     }
 }
@@ -47,14 +45,15 @@ fun TickerListHeader(tickersViewModel: TickersViewModel) {
             .background(Color(0xFF1A212A))
             .padding(horizontal = 15.dp, vertical = 5.dp)
     ) {
-        Row(Modifier.weight(1f)) {
+        Row(
+            Modifier.weight(1f), horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Row(
                 Modifier
                     .noRippleClickable() {
                         tickersViewModel.updateSortKey(SortParams.Pair)
                     },
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
             ) {
                 TickListHeaderItem("Pair", SortParams.Pair, tickersViewModel)
             }
@@ -67,8 +66,6 @@ fun TickerListHeader(tickersViewModel: TickersViewModel) {
                         tickersViewModel.updateSortKey(SortParams.Vol)
 
                     },
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
             ) {
                 TickListHeaderItem("Vol", SortParams.Vol, tickersViewModel)
             }

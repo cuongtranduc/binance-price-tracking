@@ -1,6 +1,8 @@
 package com.cuongtd.cryptotracking.utils
 
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.roundToInt
 
 val df = DecimalFormat("#,###")
@@ -31,6 +33,12 @@ class Helper {
             return DecimalFormat("#,###.##").format(price.toDouble())
         }
 
+        fun formatQuantity(quantity: String): String {
+            return if (quantity.toDouble() >= 1 )
+                DecimalFormat("#,###.###").format(quantity.toDouble()) else
+                DecimalFormat("#.######").format(quantity.toDouble())
+        }
+
         private fun trimTrailingZero(value: String?): String? {
             return if (!value.isNullOrEmpty()) {
                 if (value!!.indexOf(".") < 0) {
@@ -42,6 +50,16 @@ class Helper {
 
             } else {
                 value
+            }
+        }
+
+        fun formatTradeTime(s: String): String {
+            return try {
+                val sdf = SimpleDateFormat("HH:mm:ss")
+                val netDate = Date(s.toLong())
+                sdf.format(netDate)
+            } catch (e: Exception) {
+                e.toString()
             }
         }
     }

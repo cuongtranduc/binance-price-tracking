@@ -1,7 +1,7 @@
 package com.cuongtd.cryptotracking.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -24,15 +23,21 @@ import com.cuongtd.cryptotracking.utils.Helper
 import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 
 @Composable
-fun TickerCompose(ticker: Ticker, tickersViewModel: TickersViewModel) {
+fun TickerCompose(
+    ticker: Ticker,
+    tickersViewModel: TickersViewModel,
+    onNavigateOrderBook: (symbol: String) -> Unit
+) {
     val basePrice by tickersViewModel.basePrice.observeAsState()
     val tab by tickersViewModel.currentTab.observeAsState()
     val firstSymbol = ticker.symbol.dropLast(tab!!.name.length)
 
-
     Column {
         Row(
             modifier = Modifier
+                .clickable {
+                    onNavigateOrderBook(ticker.symbol)
+                }
                 .fillMaxSize()
                 .padding(horizontal = 15.dp, vertical = 7.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -45,8 +50,11 @@ fun TickerCompose(ticker: Ticker, tickersViewModel: TickersViewModel) {
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(firstSymbol, fontSize = 16.sp, fontWeight = FontWeight.W500)
-                    Text(" /", fontSize = 14.sp)
-                    Text(tickersViewModel.currentTab.value!!.name, fontSize = 14.sp)
+                    Text(
+                        " / ${tickersViewModel.currentTab.value!!.name}",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colors.onSecondary
+                    )
                 }
                 Text(
                     "Vol ${Helper.formatVolume(ticker.volume)}",
@@ -89,6 +97,6 @@ fun TickerCompose(ticker: Ticker, tickersViewModel: TickersViewModel) {
                 )
             }
         }
-        Divider(color = MaterialTheme.colors.onSecondary, thickness = 0.5.dp)
+//        Divider(color = MaterialTheme.colors.onSecondary, thickness = 0.5.dp)
     }
 }

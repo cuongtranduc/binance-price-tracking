@@ -1,14 +1,11 @@
 package com.cuongtd.cryptotracking.ui
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import com.cuongtd.cryptotracking.ui.theme.TickerListCompose
 import com.cuongtd.cryptotracking.ui.theme.TickerListHeader
@@ -16,7 +13,7 @@ import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 
 @SuppressLint("UnusedCrossfadeTargetStateParameter")
 @Composable
-fun MainScreenCompose(tickersViewModel: TickersViewModel) {
+fun MainScreenCompose(tickersViewModel: TickersViewModel, onNavigateOrderBook: (symbol: String) -> Unit) {
     val currentTab: Tabs? by tickersViewModel.currentTab.observeAsState()
 
     Scaffold(
@@ -26,7 +23,7 @@ fun MainScreenCompose(tickersViewModel: TickersViewModel) {
             AppTabBar(tickersViewModel)
             TickerListHeader(tickersViewModel)
             Crossfade(targetState = currentTab) {
-                TickerListCompose(tickersViewModel)
+                TickerListCompose(tickersViewModel, onNavigateOrderBook)
             }
         }
     }

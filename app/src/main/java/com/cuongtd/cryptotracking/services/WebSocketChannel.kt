@@ -1,7 +1,6 @@
 package com.cuongtd.cryptotracking
 
 import com.cuongtd.cryptotracking.models.RawData
-import com.cuongtd.cryptotracking.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -24,9 +23,9 @@ interface IWebSocketChannel {
 }
 
 class WebSocketChannel(
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    url: String
 ) : IWebSocketChannel {
-
     private val socket: WebSocket
     private val incoming = Channel<RawData>()
     private val outgoing = Channel<RawData>()
@@ -37,7 +36,7 @@ class WebSocketChannel(
             .build()
 
         val request = Request.Builder()
-            .url(Constants.WS_URL)
+            .url(url)
             .build()
 
         socket =
