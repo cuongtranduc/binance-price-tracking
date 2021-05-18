@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import com.cuongtd.cryptotracking.ui.theme.TickerListCompose
-import com.cuongtd.cryptotracking.ui.theme.TickerListHeader
+import com.cuongtd.cryptotracking.ui.tickers.TickerListHeader
 import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 
 @SuppressLint("UnusedCrossfadeTargetStateParameter")

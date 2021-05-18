@@ -2,6 +2,7 @@ package com.cuongtd.cryptotracking.repositories
 
 import com.cuongtd.cryptotracking.IWebSocketChannel
 import com.cuongtd.cryptotracking.WebSocketChannel
+import com.cuongtd.cryptotracking.models.OrderBook
 import com.cuongtd.cryptotracking.models.RawData
 import com.cuongtd.cryptotracking.models.Trade
 import com.cuongtd.cryptotracking.services.RetrofitBuilder
@@ -27,6 +28,12 @@ class OrderBookRepository {
     suspend fun getRecentTrades(symbol: String): List<Trade> {
         return withContext(Dispatchers.IO) {
             apiService.getRecentTrades(symbol).execute().body()!!
+        }
+    }
+
+    suspend fun getOrderBook(symbol: String): OrderBook {
+        return withContext(Dispatchers.IO) {
+            apiService.getOrderBook(symbol).execute().body()!!
         }
     }
 }
