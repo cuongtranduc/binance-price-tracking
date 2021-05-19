@@ -34,8 +34,8 @@ fun OrderBookListHeader() {
         }
         Row(
             modifier = Modifier
-                .weight(1f)
-                .padding(start = 15.dp), verticalAlignment = Alignment.CenterVertically
+                .weight(1f),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 "Asks",

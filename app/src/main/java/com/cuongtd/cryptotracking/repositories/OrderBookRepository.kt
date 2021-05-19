@@ -2,7 +2,7 @@ package com.cuongtd.cryptotracking.repositories
 
 import com.cuongtd.cryptotracking.IWebSocketChannel
 import com.cuongtd.cryptotracking.WebSocketChannel
-import com.cuongtd.cryptotracking.models.OrderBook
+import com.cuongtd.cryptotracking.models.OrderBookSnapshot
 import com.cuongtd.cryptotracking.models.RawData
 import com.cuongtd.cryptotracking.models.Trade
 import com.cuongtd.cryptotracking.services.RetrofitBuilder
@@ -21,6 +21,11 @@ class OrderBookRepository {
         return channel.getIncoming()
     }
 
+    fun createDepthStream(scope: CoroutineScope, symbol: String): Flow<RawData> {
+        channel = WebSocketChannel(scope, "${Constants.WS_BASE_URL}${symbol.toLowerCase()}@depth")
+        return channel.getIncoming()
+    }
+
     fun webSocketSend(data: RawData) {
         channel.send(data)
     }
@@ -31,9 +36,9 @@ class OrderBookRepository {
         }
     }
 
-    suspend fun getOrderBook(symbol: String): OrderBook {
+    suspend fun getOrderBookSnapshot(symbol: String): OrderBookSnapshot {
         return withContext(Dispatchers.IO) {
-            apiService.getOrderBook(symbol).execute().body()!!
+            apiService.getOrderBookSnapshot(symbol).execute().body()!!
         }
     }
 }

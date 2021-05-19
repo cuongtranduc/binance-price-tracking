@@ -1,6 +1,6 @@
 package com.cuongtd.cryptotracking.services
 
-import com.cuongtd.cryptotracking.models.OrderBook
+import com.cuongtd.cryptotracking.models.OrderBookSnapshot
 import com.cuongtd.cryptotracking.models.Ticker
 import com.cuongtd.cryptotracking.models.Trade
 import com.cuongtd.cryptotracking.utils.Constants
@@ -15,10 +15,10 @@ interface ApiService {
     fun getTickers(): Call<List<Ticker>>
 
     @GET("v3/depth")
-    fun getOrderBook(
+    fun getOrderBookSnapshot(
         @Query("symbol") symbol: String,
-        @Query("limit") limit: Int = Constants.API_RESULT_LIMIT
-    ): Call<OrderBook>
+        @Query("limit") limit: Int = Constants.DEPTH_LIMIT
+    ): Call<OrderBookSnapshot>
 
     @GET("v3/trades")
     fun getRecentTrades(

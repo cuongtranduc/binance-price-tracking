@@ -19,8 +19,6 @@ import com.cuongtd.cryptotracking.noRippleClickable
 import com.cuongtd.cryptotracking.ui.orderbook.OrderBookList
 import com.cuongtd.cryptotracking.ui.orderbook.OrderBookTopBar
 import com.cuongtd.cryptotracking.ui.orderbook.RecentTrades
-import com.cuongtd.cryptotracking.ui.theme.TickerListCompose
-import com.cuongtd.cryptotracking.utils.Constants
 import com.cuongtd.cryptotracking.viewmodels.OrderBookViewModel
 
 enum class OrderTabs(val tab: String) {

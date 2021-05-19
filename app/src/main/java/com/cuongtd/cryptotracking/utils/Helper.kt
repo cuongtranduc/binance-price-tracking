@@ -33,6 +33,13 @@ class Helper {
             return DecimalFormat("#,###.##").format(price.toDouble())
         }
 
+        fun formatOrderPrice(price: String): String {
+            if (price.toDouble() > 1) {
+                return DecimalFormat("#,###.##").format(price.toDouble())
+            }
+            return DecimalFormat("#.######").format(price.toDouble())
+        }
+
         fun formatQuantity(quantity: String): String {
             return if (quantity.toDouble() >= 1 )
                 DecimalFormat("#,###.###").format(quantity.toDouble()) else
