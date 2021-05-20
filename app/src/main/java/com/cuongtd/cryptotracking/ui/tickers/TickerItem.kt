@@ -2,6 +2,7 @@ package com.cuongtd.cryptotracking.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -97,6 +98,6 @@ fun TickerCompose(
                 )
             }
         }
-//        Divider(color = MaterialTheme.colors.onSecondary, thickness = 0.5.dp)
+//        Divider(color = MaterialTheme.colors.onSecondary, thickness = 0.2.dp)
     }
 }

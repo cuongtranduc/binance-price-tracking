@@ -11,6 +11,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,6 +24,7 @@ import com.cuongtd.cryptotracking.ui.orderbook.OrderBookList
 import com.cuongtd.cryptotracking.ui.orderbook.OrderBookTopBar
 import com.cuongtd.cryptotracking.ui.orderbook.RecentTrades
 import com.cuongtd.cryptotracking.viewmodels.OrderBookViewModel
+import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 
 enum class OrderTabs(val tab: String) {
     Order("order"), Trade("trade")
@@ -30,13 +33,15 @@ enum class OrderTabs(val tab: String) {
 @RequiresApi(Build.VERSION_CODES.N)
 @SuppressLint("UnusedCrossfadeTargetStateParameter")
 @Composable
-fun OrderBookScreenCompose(symbol: String?, goBack: () -> Unit) {
+fun OrderBookScreenCompose(tickersViewModel: TickersViewModel, symbol: String?, goBack: () -> Unit) {
     val orderBookViewModel = OrderBookViewModel(symbol!!)
+    val baseSymbol = tickersViewModel.currentTab
+    val firstSymbol = symbol.dropLast(baseSymbol.value!!.name.length)
     var currentTab = remember { mutableStateOf(OrderTabs.Order) }
 
     Scaffold(
         topBar = {
-            OrderBookTopBar(symbol, goBack)
+            OrderBookTopBar("${firstSymbol} / ${baseSymbol.value}" , goBack)
         }
     ) {
         Column {

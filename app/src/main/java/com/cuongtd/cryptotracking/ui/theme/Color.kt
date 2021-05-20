@@ -12,3 +12,4 @@ val Light100 = Color(0xFF707A8A)
 val Orange = Color(0xFFF0B90B)
 val GainColor = Color(0xFF0ECB81)
 val LoseColor = Color(0xFFF6465D)
+// #0D1115

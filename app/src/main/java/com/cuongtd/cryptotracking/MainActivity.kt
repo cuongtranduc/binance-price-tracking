@@ -1,8 +1,11 @@
 package com.cuongtd.cryptotracking
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,8 +22,9 @@ import com.cuongtd.cryptotracking.ui.theme.CryptoTrackingTheme
 import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 
 class MainActivity : ComponentActivity() {
-    private val tickersViewModel = TickersViewModel()
+    private val tickersViewModel by viewModels<TickersViewModel>()
 
+    @RequiresApi(Build.VERSION_CODES.N)
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +50,7 @@ class MainActivity : ComponentActivity() {
                             }
                             EnterTransition {
                                 OrderBookScreenCompose(
+                                    tickersViewModel,
                                     symbol = it.arguments?.getString("symbol"),
                                     goBack = ::goBack
                                 )

@@ -36,7 +36,7 @@ class TickersViewModel : ViewModel() {
             allTickers = tickerRepository.getTickers()
             tickerRepository.createTickerStream(viewModelScope).collect {
                 if (it != null) {
-                    tickers.value = (allTickers + it).groupBy { it.symbol }.entries.map {
+                    tickers.value = (tickers.value!! + it).groupBy { it.symbol }.entries.map {
                         it.value.maxByOrNull { it.eventTime }!!
                     }
                     updateTickersByTab()
