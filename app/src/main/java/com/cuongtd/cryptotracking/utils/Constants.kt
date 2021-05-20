@@ -13,5 +13,9 @@ class Constants {
         const val ETH = "ETH"
         const val USDT = "SDT"
         const val BNB = "BNB"
+
+        const val BTCUSDT = "BTCUSDT"
+        const val ETHUSDT = "ETHUSDT"
+        const val BNBUSDT = "BNBUSDT"
     }
 }

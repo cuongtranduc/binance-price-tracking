@@ -1,38 +1,42 @@
 package com.cuongtd.cryptotracking.viewmodels
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.cuongtd.cryptotracking.models.OrderBook
 import com.cuongtd.cryptotracking.models.OrderBookSnapshot
 import com.cuongtd.cryptotracking.models.Trade
 import com.cuongtd.cryptotracking.repositories.OrderBookRepository
 import com.cuongtd.cryptotracking.utils.Constants
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+
+fun createDumpOrderBookSnapshot() = OrderBookSnapshot(1, listOf(), listOf())
+fun createDumpOrderBook() = OrderBook("", 1, "", 1, 1, listOf(), listOf())
 
 class OrderBookViewModel(symbol: String) : ViewModel() {
     private val orderBookRepository = OrderBookRepository()
-    private val gson = Gson()
-    private val tradeType = object : TypeToken<Trade>() {}.type
-    private val depthType = object : TypeToken<OrderBook>() {}.type
+
+    private var orderBookSnapshot = createDumpOrderBookSnapshot()
+    var bids: List<List<String>> = listOf()
+    var asks: List<List<String>> = listOf()
+
 
     private var _recentTrades: MutableLiveData<List<Trade>> = MutableLiveData(listOf())
     val recentTrade: LiveData<List<Trade>>
         get() = _recentTrades
 
-    private var orderBookSnapshot = OrderBookSnapshot(1, listOf(), listOf())
-
     private var _orderBook: MutableLiveData<OrderBook> =
-        MutableLiveData(OrderBook("", 1, "", 1, 1, listOf(), listOf()))
+        MutableLiveData(createDumpOrderBook())
     val orderBook: LiveData<OrderBook>
         get() = _orderBook
 
-    var bids: List<List<String>> = listOf()
-    var asks: List<List<String>> = listOf()
-
     init {
         viewModelScope.launch {
-            createOrderBookStream(symbol)
+            launch {
+                createOrderBookStream(symbol)
+            }
             createHistoricalTradeStream(symbol)
         }
     }
@@ -41,40 +45,32 @@ class OrderBookViewModel(symbol: String) : ViewModel() {
         orderBookSnapshot = orderBookRepository.getOrderBookSnapshot(symbol)
         bids = orderBookSnapshot.bids
         asks = orderBookSnapshot.asks
-        orderBookRepository.createDepthStream(viewModelScope, symbol).asLiveData()
-            .observeForever {
-                if (it != null) {
-                    val newOrderBook =
-                        gson.fromJson(
-                            it.json,
-                            depthType
-                        ) as OrderBook
-                    if (newOrderBook.FinalUpdateId > orderBookSnapshot.lastUpdateId) {
+
+        orderBookRepository.createDepthStream(viewModelScope, symbol).collect {
+            if (it != null) {
+                if (it.FinalUpdateId > orderBookSnapshot.lastUpdateId) {
+                    if (_orderBook.value!!.b.count() != 0) {
                         bids = _orderBook.value!!.b
                         asks = _orderBook.value!!.a
-                        _orderBook.value = newOrderBook
-                        _orderBook.value!!.b = (_orderBook.value!!.b + bids).distinctBy { it[0] }
-                            .filter { it[1].toDouble() != 0.0 }
-                        _orderBook.value!!.a = (_orderBook.value!!.a + asks).distinctBy { it[0] }
-                            .filter { it[1].toDouble() != 0.0 }
                     }
+
+                    _orderBook.value = it
+                    _orderBook.value!!.b = (_orderBook.value!!.b + bids).distinctBy { it[0] }
+                        .filter { it[1].toDouble() != 0.0 }
+                    _orderBook.value!!.a = (_orderBook.value!!.a + asks).distinctBy { it[0] }
+                        .filter { it[1].toDouble() != 0.0 }
                 }
             }
+        }
     }
 
     private suspend fun createHistoricalTradeStream(symbol: String) {
         _recentTrades.value = orderBookRepository.getRecentTrades(symbol)
-        orderBookRepository.webSocketCreate(viewModelScope, symbol).asLiveData()
-            .observeForever {
-                if (it != null) {
-                    _recentTrades.value =
-                        listOf(
-                            gson.fromJson(
-                                it.json,
-                                tradeType
-                            ) as Trade
-                        ).plus(_recentTrades.value!!).take(Constants.API_RESULT_LIMIT)
-                }
+        orderBookRepository.createHistoricalTradeStream(viewModelScope, symbol).collect {
+            if (it != null) {
+                _recentTrades.value =
+                    listOf(it).plus(_recentTrades.value!!).take(Constants.API_RESULT_LIMIT)
             }
+        }
     }
 }

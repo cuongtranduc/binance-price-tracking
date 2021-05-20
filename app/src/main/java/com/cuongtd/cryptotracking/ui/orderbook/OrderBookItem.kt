@@ -56,6 +56,9 @@ fun OrderBookItem(bid: List<String>, ask: List<String>, maxBid: Double, maxAsk: 
                 )
                 Text(
                     Helper.formatOrderPrice(bid[0]),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 5.dp),
                     fontSize = 13.sp,
                     textAlign = TextAlign.End,
                     color = GainColor
@@ -92,7 +95,9 @@ fun OrderBookItem(bid: List<String>, ask: List<String>, maxBid: Double, maxAsk: 
                 Text(
                     Helper.formatOrderPrice(ask[0]),
                     fontSize = 13.sp,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 5.dp),
                     textAlign = TextAlign.Start,
                     color = LoseColor
                 )

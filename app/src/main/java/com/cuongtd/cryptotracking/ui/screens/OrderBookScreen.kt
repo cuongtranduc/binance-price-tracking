@@ -1,6 +1,8 @@
 package com.cuongtd.cryptotracking.ui
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -25,6 +27,7 @@ enum class OrderTabs(val tab: String) {
     Order("order"), Trade("trade")
 }
 
+@RequiresApi(Build.VERSION_CODES.N)
 @SuppressLint("UnusedCrossfadeTargetStateParameter")
 @Composable
 fun OrderBookScreenCompose(symbol: String?, goBack: () -> Unit) {

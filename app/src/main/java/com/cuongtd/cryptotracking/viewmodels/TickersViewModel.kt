@@ -1,18 +1,19 @@
 package com.cuongtd.cryptotracking.viewmodels
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.cuongtd.cryptotracking.models.Ticker
 import com.cuongtd.cryptotracking.repositories.TickerRepository
 import com.cuongtd.cryptotracking.ui.Tabs
+import com.cuongtd.cryptotracking.utils.Constants
 import com.cuongtd.cryptotracking.utils.SortParams
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class TickersViewModel : ViewModel() {
     private val tickerRepository = TickerRepository()
-    private val gson = Gson()
-    private val tickerType = object : TypeToken<List<Ticker>>() {}.type
 
     private val _isSortDesc = MutableLiveData(true)
     val isSortDesc: LiveData<Boolean>
@@ -28,29 +29,27 @@ class TickersViewModel : ViewModel() {
 
     var tickers: MutableLiveData<List<Ticker>> = MutableLiveData<List<Ticker>>(listOf())
     var allTickers: List<Ticker> = listOf()
-
     var basePrice = MutableLiveData<Double>(0.0)
 
     init {
         viewModelScope.launch() {
             allTickers = tickerRepository.getTickers()
-            tickerRepository.webSocketCreate(viewModelScope).asLiveData().observeForever {
+            tickerRepository.createTickerStream(viewModelScope).collect {
                 if (it != null) {
-                    tickers.value = (gson.fromJson(
-                        it.json,
-                        tickerType
-                    ) as List<Ticker>
-                            ).plus(
-                            allTickers
-                        )?.distinctBy { ticker -> ticker.symbol }
-                    tickers.value = tickers.value!!.filter {
-                        it.symbol.takeLast(3)
-                            .contains(_currentTab.value!!.symbol, ignoreCase = true)
+                    tickers.value = (allTickers + it).groupBy { it.symbol }.entries.map {
+                        it.value.maxByOrNull { it.eventTime }!!
                     }
+                    updateTickersByTab()
                     updateBasePrice()
-                    applySort()
                 }
             }
+        }
+    }
+
+    fun updateTickersByTab() {
+        tickers.value = tickers.value?.filter {
+            it.symbol.takeLast(3)
+                .contains(_currentTab.value!!.symbol, ignoreCase = true)
         }
     }
 
@@ -86,9 +85,9 @@ class TickersViewModel : ViewModel() {
 
     private fun updateBasePrice() {
         basePrice.value = when (currentTab.value) {
-            Tabs.BTC -> allTickers!!.find { it.symbol == "BTCUSDT" }?.lastPrice?.toDouble()
-            Tabs.ETH -> allTickers!!.find { it.symbol == "ETHUSDT" }?.lastPrice?.toDouble()
-            Tabs.BNB -> allTickers!!.find { it.symbol == "BNBUSDT" }?.lastPrice?.toDouble()
+            Tabs.BTC -> allTickers!!.find { it.symbol == Constants.BTCUSDT }?.lastPrice?.toDouble()
+            Tabs.ETH -> allTickers!!.find { it.symbol == Constants.ETHUSDT }?.lastPrice?.toDouble()
+            Tabs.BNB -> allTickers!!.find { it.symbol == Constants.BNBUSDT }?.lastPrice?.toDouble()
             else -> 1.0
         }
     }
