@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,7 +30,8 @@ fun TickListHeaderItem(
 
     Text(
         text,
-        fontSize = 13.sp,
+        fontSize = 10.sp,
+        fontWeight = FontWeight.W300,
         color = if (currentSortKey == sortKey) MaterialTheme.colors.primary else MaterialTheme.colors.onSecondary,
         textAlign = TextAlign.End
     )
@@ -40,7 +42,7 @@ fun TickListHeaderItem(
             tint = MaterialTheme.colors.primary,
             modifier = Modifier
                 .padding(start = 3.dp)
-                .size(16.dp)
+                .size(14.dp)
         )
     }
     if (tickersViewModel.currentSortKey.value == sortKey && !isSortDesc!!) {
@@ -50,7 +52,7 @@ fun TickListHeaderItem(
             tint = MaterialTheme.colors.primary,
             modifier = Modifier
                 .padding(start = 3.dp)
-                .size(16.dp),
+                .size(14.dp),
         )
     }
 }

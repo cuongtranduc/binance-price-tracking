@@ -10,8 +10,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.cuongtd.cryptotracking.noRippleClickable
 import com.cuongtd.cryptotracking.utils.SortParams
 import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
@@ -20,8 +23,8 @@ import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 fun TickerListHeader(tickersViewModel: TickersViewModel) {
     Row(
         Modifier
-            .height(30.dp)
-            .background(Color(0xFF1A212A))
+            .height(25.dp)
+            .background(MaterialTheme.colors.background)
             .padding(horizontal = 15.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -38,7 +41,10 @@ fun TickerListHeader(tickersViewModel: TickersViewModel) {
                 TickListHeaderItem("Pair", SortParams.Pair, tickersViewModel)
             }
             Text(
-                " / ", color = MaterialTheme.colors.onSecondary,
+                text = " / ",
+                color = MaterialTheme.colors.onSecondary,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.W300
             )
             Row(
                 Modifier

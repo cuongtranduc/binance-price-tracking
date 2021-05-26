@@ -1,5 +1,6 @@
 package com.cuongtd.cryptotracking.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
@@ -7,6 +8,7 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
+@SuppressLint("ConflictingOnColor")
 private val DarkColorPalette = darkColors(
     primary = Orange,
     primaryVariant = Dark600,
@@ -17,7 +19,7 @@ private val DarkColorPalette = darkColors(
     error = Purple200,
     onPrimary = Orange,
     onSecondary = Light100,
-    onBackground = Color.White,
+    onBackground = Color(0xFFF8F8F7),
     onSurface =  Color(0xffeaecef),
     onError = Purple200
 )

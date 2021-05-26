@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.cuongtd.cryptotracking.utils.Constants
 import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 
@@ -45,8 +46,9 @@ fun AppTabBar(tickersViewModel: TickersViewModel) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         tab.name,
+                        fontSize = 14.sp,
                         color = if (tab == currentTab) MaterialTheme.colors.primary else MaterialTheme.colors.onSecondary,
-                        fontWeight = FontWeight(600)
+                        fontWeight = FontWeight.W600
                     )
                     Divider(
                         Modifier.padding(top = 2.dp),

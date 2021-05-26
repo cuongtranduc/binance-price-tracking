@@ -19,7 +19,7 @@ fun AppTopBar() {
             Text(
                 "Markets",
                 fontSize = 18.sp,
-                color = MaterialTheme.colors.onSurface,
+                color = MaterialTheme.colors.primary,
                 fontWeight = FontWeight.W600,
             )
         },
@@ -35,7 +35,7 @@ fun AppTopBar() {
                     imageVector = Icons.Filled.Search,
                     null,
                     modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colors.onSurface
+                    tint = MaterialTheme.colors.primary
                 )
             }
         },
