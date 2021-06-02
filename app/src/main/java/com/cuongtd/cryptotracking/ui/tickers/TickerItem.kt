@@ -1,22 +1,15 @@
 package com.cuongtd.cryptotracking.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.TrendingDown
-import androidx.compose.material.icons.filled.TrendingUp
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -29,15 +22,32 @@ import com.cuongtd.cryptotracking.ui.theme.LoseColor
 import com.cuongtd.cryptotracking.utils.Helper
 import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
 
+enum class PriceColor(val color: Color) {
+    UnChanged(Color.Unspecified), Gain(GainColor), Lose(LoseColor)
+}
+
 @Composable
 fun TickerCompose(
     ticker: Ticker,
     tickersViewModel: TickersViewModel,
-    onNavigateOrderBook: (symbol: String) -> Unit
+    onNavigateOrderBook: (symbol: String) -> Unit,
 ) {
     val basePrice by tickersViewModel.basePrice.observeAsState()
     val tab by tickersViewModel.currentTab.observeAsState()
-    val firstSymbol = ticker.symbol.dropLast(tab!!.name.length)
+    val firstSymbol = remember { ticker.symbol.dropLast(tab!!.name.length) }
+    var lastTicker by remember { mutableStateOf(ticker) }
+
+    val priceColor by remember(ticker) {
+        derivedStateOf {
+            val color =
+                if (ticker.lastPrice != lastTicker.lastPrice)
+                    if (lastTicker.lastPrice <= ticker.lastPrice) PriceColor.Gain
+                    else PriceColor.Lose
+                else PriceColor.UnChanged
+            lastTicker = ticker
+            color
+        }
+    }
 
     Column {
         Row(
@@ -79,7 +89,11 @@ fun TickerCompose(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(Helper.formatPrice(ticker.lastPrice), fontSize = 14.sp)
+                Text(
+                    Helper.formatPrice(ticker.lastPrice),
+                    fontSize = 14.sp,
+                    color = priceColor.color
+                )
                 Text(
                     "${Helper.formatPriceDouble(ticker.lastPrice.toDouble() * (basePrice ?: 0.0))}$",
                     color = MaterialTheme.colors.onSecondary,
@@ -120,12 +134,6 @@ fun TickerCompose(
                         fontSize = 10.sp,
                         fontWeight = FontWeight.W300,
                     )
-//                Icon(
-//                    imageVector = if (ticker.priceChangePercent.toDouble() >= 0) Icons.Filled.TrendingUp else Icons.Filled.TrendingDown,
-//                    contentDescription = "Change Percentage",
-//                    tint = if (ticker.priceChangePercent.toDouble() >= 0) GainColor else LoseColor,
-//                    modifier = Modifier.padding(start = 3.dp)
-//                )
                 }
             }
         }
