@@ -21,6 +21,7 @@ import com.cuongtd.cryptotracking.ui.theme.GainColor
 import com.cuongtd.cryptotracking.ui.theme.LoseColor
 import com.cuongtd.cryptotracking.utils.Helper
 import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
+import com.google.gson.Gson
 
 enum class PriceColor(val color: Color) {
     UnChanged(Color.Unspecified), Gain(GainColor), Lose(LoseColor)
@@ -30,7 +31,7 @@ enum class PriceColor(val color: Color) {
 fun TickerCompose(
     ticker: Ticker,
     tickersViewModel: TickersViewModel,
-    onNavigateOrderBook: (symbol: String) -> Unit,
+    onNavigateOrderBook: (symbol: String, tikcerJson: String) -> Unit,
 ) {
     val basePrice by tickersViewModel.basePrice.observeAsState()
     val tab by tickersViewModel.currentTab.observeAsState()
@@ -53,7 +54,7 @@ fun TickerCompose(
         Row(
             modifier = Modifier
                 .noRippleClickable {
-                    onNavigateOrderBook(ticker.symbol)
+                    onNavigateOrderBook(ticker.symbol, Gson().toJson(ticker))
                 }
                 .fillMaxSize()
                 .padding(vertical = 7.dp),

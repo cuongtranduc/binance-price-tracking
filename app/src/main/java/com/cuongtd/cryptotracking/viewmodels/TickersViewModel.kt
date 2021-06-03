@@ -30,10 +30,12 @@ class TickersViewModel : ViewModel() {
     var tickers: MutableLiveData<List<Ticker>> = MutableLiveData<List<Ticker>>(listOf())
     var allTickers: List<Ticker> = listOf()
     var basePrice = MutableLiveData<Double>(0.0)
+    var isLoading = MutableLiveData<Boolean>(true)
 
     init {
         viewModelScope.launch() {
             allTickers = tickerRepository.getTickers()
+            isLoading.value = false
             tickerRepository.createTickerStream(viewModelScope).collect {
                 if (it != null) {
                     tickers.value = (tickers.value!! + it).groupBy { it.symbol }.entries.map {

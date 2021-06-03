@@ -19,7 +19,7 @@ internal object Compare {
     }
 }
 
-val LIMIT_DEPTH = 10  // Constants.API_RESULT_LIMIT
+const val LIMIT_DEPTH = 8  // Constants.API_RESULT_LIMIT
 
 @RequiresApi(Build.VERSION_CODES.N)
 @Composable
@@ -40,7 +40,6 @@ fun OrderBookList(orderBookViewModel: OrderBookViewModel) {
         OrderBookListHeader()
         LazyColumn(
             Modifier
-                .weight(1f)
                 .padding(horizontal = 15.dp),
             horizontalAlignment = Alignment.Start
         ) {

@@ -13,3 +13,4 @@ val Orange = Color(0xFFE7BC26)
 val GainColor = Color(0xFF08CA98)
 val LoseColor = Color(0xFFF04164)
 // #0D1115p
+// 1D242E

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cuongtd.cryptotracking.models.OrderBook
 import com.cuongtd.cryptotracking.models.OrderBookSnapshot
+import com.cuongtd.cryptotracking.models.Ticker
 import com.cuongtd.cryptotracking.models.Trade
 import com.cuongtd.cryptotracking.repositories.OrderBookRepository
 import com.cuongtd.cryptotracking.utils.Constants
@@ -32,8 +33,15 @@ class OrderBookViewModel(symbol: String) : ViewModel() {
     val orderBook: LiveData<OrderBook>
         get() = _orderBook
 
+    private var _ticker: MutableLiveData<Ticker> = MutableLiveData()
+    val ticker: LiveData<Ticker>
+        get() = _ticker
+
     init {
         viewModelScope.launch {
+            launch {
+                createTickerStream(symbol)
+            }
             launch {
                 createOrderBookStream(symbol)
             }
@@ -46,7 +54,10 @@ class OrderBookViewModel(symbol: String) : ViewModel() {
         bids = orderBookSnapshot.bids
         asks = orderBookSnapshot.asks
 
-        orderBookRepository.createDepthStream(viewModelScope, symbol).collect {
+        _orderBook.value!!.b = bids
+        _orderBook.value!!.a = asks
+
+        orderBookRepository.createDepthStream(viewModelScope, symbol).collect { it ->
             if (it != null) {
                 if (it.FinalUpdateId > orderBookSnapshot.lastUpdateId) {
                     if (_orderBook.value!!.b.count() != 0) {
@@ -70,6 +81,14 @@ class OrderBookViewModel(symbol: String) : ViewModel() {
             if (it != null) {
                 _recentTrades.value =
                     listOf(it).plus(_recentTrades.value!!).take(Constants.API_RESULT_LIMIT)
+            }
+        }
+    }
+
+    private suspend fun createTickerStream(symbol: String) {
+        orderBookRepository.createTickerStream(viewModelScope, symbol).collect {
+            if (it != null) {
+                _ticker.value = it
             }
         }
     }

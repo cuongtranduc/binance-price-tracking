@@ -39,8 +39,8 @@ fun OrderBookTopBar(symbol: String, goBack: () -> Unit) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Text(
                     symbol,
-                    fontSize = 18.sp,
-                    color = MaterialTheme.colors.onSurface,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colors.primary,
                     fontWeight = FontWeight.W600,
                     textAlign = TextAlign.Center
                 )

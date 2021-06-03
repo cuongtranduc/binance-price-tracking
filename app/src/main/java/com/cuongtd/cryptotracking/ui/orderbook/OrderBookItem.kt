@@ -24,7 +24,8 @@ fun OrderBookItem(bid: List<String>, ask: List<String>, maxBid: Double, maxAsk: 
         Box(
             Modifier
                 .fillMaxHeight()
-                .weight(1f),
+                .weight(1f)
+                .padding(end = 2.dp),
         ) {
             Row(
                 Modifier.matchParentSize()
@@ -50,7 +51,7 @@ fun OrderBookItem(bid: List<String>, ask: List<String>, maxBid: Double, maxAsk: 
             ) {
                 Text(
                     Helper.formatPrice(bid[1]),
-                    fontSize = 13.sp,
+                    fontSize = 11.sp,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Start
                 )
@@ -58,8 +59,9 @@ fun OrderBookItem(bid: List<String>, ask: List<String>, maxBid: Double, maxAsk: 
                     Helper.formatOrderPrice(bid[0]),
                     modifier = Modifier
                         .weight(1f)
-                        .padding(end = 5.dp),
-                    fontSize = 13.sp,
+                        .padding(end = 10.dp),
+                    fontSize = 11.sp,
+//                    fontWeight = FontWeight.W600,
                     textAlign = TextAlign.End,
                     color = GainColor
                 )
@@ -69,6 +71,7 @@ fun OrderBookItem(bid: List<String>, ask: List<String>, maxBid: Double, maxAsk: 
             Modifier
                 .fillMaxHeight()
                 .weight(1f)
+                .padding(start = 2.dp)
         ) {
             Row(
                 Modifier.matchParentSize()
@@ -94,16 +97,17 @@ fun OrderBookItem(bid: List<String>, ask: List<String>, maxBid: Double, maxAsk: 
             ) {
                 Text(
                     Helper.formatOrderPrice(ask[0]),
-                    fontSize = 13.sp,
+                    fontSize = 11.sp,
+//                    fontWeight = FontWeight.W600,
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start = 5.dp),
+                        .padding(start = 10.dp),
                     textAlign = TextAlign.Start,
                     color = LoseColor
                 )
                 Text(
                     Helper.formatPrice(ask[1]),
-                    fontSize = 13.sp,
+                    fontSize = 11.sp,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.End
                 )

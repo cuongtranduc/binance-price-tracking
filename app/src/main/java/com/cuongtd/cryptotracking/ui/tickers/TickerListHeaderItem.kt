@@ -48,7 +48,6 @@ fun TickListHeaderItem(
                 modifier = Modifier
                     .size(20.dp)
                     .padding(bottom = 7.dp)
-
             )
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,

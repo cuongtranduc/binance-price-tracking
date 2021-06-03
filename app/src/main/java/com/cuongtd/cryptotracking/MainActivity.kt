@@ -20,6 +20,7 @@ import com.cuongtd.cryptotracking.ui.MainScreenCompose
 import com.cuongtd.cryptotracking.ui.OrderBookScreenCompose
 import com.cuongtd.cryptotracking.ui.theme.CryptoTrackingTheme
 import com.cuongtd.cryptotracking.viewmodels.TickersViewModel
+import java.util.*
 
 class MainActivity : ComponentActivity() {
     private val tickersViewModel by viewModels<TickersViewModel>()
@@ -31,8 +32,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
 
-            fun onNavigateOrderBook(symbol: String) {
-                navController.navigate("order/${symbol}")
+            fun onNavigateOrderBook(symbol: String, ticker: String) {
+                navController.navigate("order/${symbol}/${ticker}")
             }
 
             CryptoTrackingTheme {
@@ -42,8 +43,11 @@ class MainActivity : ComponentActivity() {
                             MainScreenCompose(tickersViewModel, ::onNavigateOrderBook)
                         }
                         composable(
-                            "order/{symbol}",
-                            arguments = listOf(navArgument("symbol") { defaultValue = "BTCUSDT" })
+                            "order/{symbol}/{ticker}",
+                            arguments = listOf(
+                                navArgument("symbol") { defaultValue = "BTCUSDT" },
+                                navArgument("ticker") { defaultValue = "" }
+                            )
                         ) {
                             fun goBack() {
                                 navController.popBackStack()
@@ -52,6 +56,7 @@ class MainActivity : ComponentActivity() {
                                 OrderBookScreenCompose(
                                     tickersViewModel,
                                     symbol = it.arguments?.getString("symbol"),
+                                    tickerJson = it.arguments?.getString("ticker"),
                                     goBack = ::goBack
                                 )
                             }
